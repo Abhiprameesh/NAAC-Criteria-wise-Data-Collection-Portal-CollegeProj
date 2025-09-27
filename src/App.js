@@ -1,71 +1,68 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './App.css';
-import Header from './components/Header';
-import Dashboard from './components/Dashboard';
-import DataEntry from './components/DataEntry';
-import Reports from './components/Reports';
-import Settings from './components/Settings';
-import Modal from './components/Modal';
-import { useLocalStorage } from './hooks/useLocalStorage';
+
+// Simple inline components for testing
+const Header = ({ activeTab, setActiveTab }) => (
+  <header className="header">
+    <div className="header-content">
+      <div className="logo">
+        <div className="logo-icon">N</div>
+        <h1>NAAC Data Collection Portal</h1>
+      </div>
+      <nav className="nav-tabs">
+        <button className={`tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`} 
+                onClick={() => setActiveTab('dashboard')}>Dashboard</button>
+        <button className={`tab-btn ${activeTab === 'data-entry' ? 'active' : ''}`} 
+                onClick={() => setActiveTab('data-entry')}>Data Entry</button>
+      </nav>
+    </div>
+  </header>
+);
+
+const Dashboard = () => (
+  <div className="tab-content">
+    <h2>Dashboard</h2>
+    <div className="dashboard-grid">
+      <div className="stat-card">
+        <div className="stat-number">0</div>
+        <div className="stat-label">Total Entries</div>
+      </div>
+      <div className="stat-card">
+        <div className="stat-number">0/7</div>
+        <div className="stat-label">Completed Criteria</div>
+      </div>
+    </div>
+    <p>Welcome to the NAAC Data Collection Portal!</p>
+  </div>
+);
+
+const DataEntry = () => (
+  <div className="tab-content">
+    <div className="form-container">
+      <h2>Data Entry Form</h2>
+      <form>
+        <div className="form-group">
+          <label>Institution Name</label>
+          <input type="text" placeholder="Enter institution name" />
+        </div>
+        <div className="form-group">
+          <button type="button" className="btn btn-primary">Save Data</button>
+        </div>
+      </form>
+    </div>
+  </div>
+);
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [naacData, setNaacData] = useLocalStorage('naacData', []);
-  const [settings, setSettings] = useLocalStorage('naacSettings', {});
-  const [modalContent, setModalContent] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = (content) => {
-    setModalContent(content);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setModalContent(null);
-  };
-
-  const addEntry = (newEntry) => {
-    const entryWithId = {
-      ...newEntry,
-      id: Date.now(),
-      dateAdded: new Date().toLocaleDateString(),
-    };
-    setNaacData([...naacData, entryWithId]);
-  };
-
-  const deleteEntry = (id) => {
-    setNaacData(naacData.filter(entry => entry.id !== id));
-  };
-
-  const clearAllData = () => {
-    if (window.confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
-      setNaacData([]);
-    }
-  };
-
-  const renderActiveTab = () => {
-    switch (activeTab) {
-      case 'dashboard':
-        return <Dashboard naacData={naacData} openModal={openModal} setActiveTab={setActiveTab} />;
-      case 'data-entry':
-        return <DataEntry onAddEntry={addEntry} settings={settings} />;
-      case 'reports':
-        return <Reports naacData={naacData} deleteEntry={deleteEntry} openModal={openModal} />;
-      case 'settings':
-        return <Settings settings={settings} setSettings={setSettings} clearAllData={clearAllData} naacData={naacData} />;
-      default:
-        return <Dashboard naacData={naacData} openModal={openModal} setActiveTab={setActiveTab} />;
-    }
-  };
 
   return (
     <div className="App">
       <Header activeTab={activeTab} setActiveTab={setActiveTab} />
       <main className="main-container">
-        {renderActiveTab()}
+        {activeTab === 'dashboard' && <Dashboard />}
+        {activeTab === 'data-entry' && <DataEntry />}
       </main>
-      <Modal isOpen={isModalOpen} onClose={closeModal} content={modalContent} />
     </div>
   );
 }
