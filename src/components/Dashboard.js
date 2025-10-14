@@ -159,7 +159,6 @@ const Dashboard = ({ naacData, openModal, setActiveTab }) => {
           className="btn btn-primary" 
           onClick={() => {
             setActiveTab('data-entry');
-            // Close modal by not calling openModal
           }}
         >
           📝 Add Data for This Criteria
