@@ -16,16 +16,10 @@ A MERN stack application for collecting and managing NAAC criteria-wise institut
 
 ## Setup
 
-1. Install dependencies:
+Install dependencies:
    ```bash
    npm install
    ```
-2. (Optional) Create a `.env` file in the project root:
-   ```env
-   MONGO_URI=mongodb://localhost:27017/naac_portal
-   PORT=5000
-   ```
-   If not provided, the app defaults to `mongodb://localhost:27017/naac_portal`.
 
 ## Scripts
 
@@ -65,10 +59,6 @@ Base URL: `http://localhost:5000/api`
 - `PUT /settings` – Upsert/update settings
 
 See `routes/entries.js` and `routes/settings.js` for request/response shapes.
-
-## Database
-
-Connection is configured in `config/db.js` using Mongoose. It reads `MONGO_URI` from environment variables and falls back to `mongodb://localhost:27017/naac_portal`.
 
 ## Project Structure (key paths)
 
