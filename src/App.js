@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 // Import components
@@ -8,17 +8,28 @@ import DataEntry from './components/DataEntry';
 import Reports from './components/Reports';
 import Settings from './components/Settings';
 import Modal from './components/Modal';
-
-// Import hooks
-import { useLocalStorage } from './hooks/useLocalStorage';
+import { getEntries, createEntry, deleteEntryById, clearAllEntries, getSettings as getSettingsApi, updateSettings as updateSettingsApi } from './api';
 
 // Main App Component
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [naacData, setNaacData] = useLocalStorage('naacData', []);
-  const [settings, setSettings] = useLocalStorage('naacSettings', {});
+  const [naacData, setNaacData] = useState([]);
+  const [settings, setSettingsState] = useState({});
   const [modalContent, setModalContent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const [entries, s] = await Promise.all([getEntries(), getSettingsApi()]);
+        setNaacData(entries || []);
+        setSettingsState(s || {});
+      } catch (e) {
+        console.error('Failed to load initial data', e);
+      }
+    }
+    load();
+  }, []);
 
   const openModal = (content) => {
     setModalContent(content);
@@ -30,22 +41,41 @@ function App() {
     setModalContent(null);
   };
 
-  const addEntry = (newEntry) => {
-    const entryWithId = {
-      ...newEntry,
-      id: Date.now(),
-      dateAdded: new Date().toLocaleDateString(),
-    };
-    setNaacData([...naacData, entryWithId]);
+  const addEntry = async (newEntry) => {
+    try {
+      const saved = await createEntry(newEntry);
+      setNaacData([saved, ...naacData]);
+    } catch (e) {
+      console.error('Failed to create entry', e);
+    }
   };
 
-  const deleteEntry = (id) => {
-    setNaacData(naacData.filter(entry => entry.id !== id));
+  const deleteEntry = async (id) => {
+    try {
+      await deleteEntryById(id);
+      setNaacData(naacData.filter(entry => entry.id !== id));
+    } catch (e) {
+      console.error('Failed to delete entry', e);
+    }
   };
 
-  const clearAllData = () => {
+  const clearAllData = async () => {
     if (window.confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
-      setNaacData([]);
+      try {
+        await clearAllEntries();
+        setNaacData([]);
+      } catch (e) {
+        console.error('Failed to clear entries', e);
+      }
+    }
+  };
+
+  const setSettings = async (payload) => {
+    try {
+      const updated = await updateSettingsApi(payload);
+      setSettingsState(updated || {});
+    } catch (e) {
+      console.error('Failed to update settings', e);
     }
   };
 
