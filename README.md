@@ -1,22 +1,84 @@
-# Getting Started with Create React App
+# NAAC Criteria-wise Data Collection Portal (MERN)
 
-This project was bootstrapped with creatig a React App
+A MERN stack application for collecting and managing NAAC criteria-wise institutional data with a React frontend, Express/Node backend, and MongoDB via Mongoose.
 
-## Available Scripts
+## Tech Stack
 
-In the project directory, you can run:
+- React (Create React App)
+- Node.js + Express
+- MongoDB + Mongoose
+- dotenv, cors
 
-### `npm start`
+## Prerequisites
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Node.js 18+
+- MongoDB running locally or a cloud MongoDB URI
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Setup
 
-### `npm test`
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. (Optional) Create a `.env` file in the project root:
+   ```env
+   MONGO_URI=mongodb://localhost:27017/naac_portal
+   PORT=5000
+   ```
+   If not provided, the app defaults to `mongodb://localhost:27017/naac_portal`.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Scripts
 
--nil-
+- `npm run start` – Start React dev server (port 3000)
+- `npm run start:server` – Start Express API server (port 5000 by default)
+- `npm run dev` – Run both servers concurrently
+- `npm run build` – Build React for production
+- `npm test` – Run tests
+
+The React dev server proxies API requests to `http://localhost:5000` (see `proxy` in `package.json`).
+
+## Running in Development
+
+Recommended:
+```bash
+npm run dev
+```
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:5000
+
+You can also run them separately in two terminals:
+```bash
+npm start
+npm run start:server
+```
+
+## API Endpoints
+
+Base URL: `http://localhost:5000/api`
+
+- `GET /entries` – List entries (sorted by newest)
+- `POST /entries` – Create entry
+- `DELETE /entries/:id` – Delete entry by numeric `id`
+- `DELETE /entries` – Delete all entries
+
+- `GET /settings` – Get settings
+- `PUT /settings` – Upsert/update settings
+
+See `routes/entries.js` and `routes/settings.js` for request/response shapes.
+
+## Database
+
+Connection is configured in `config/db.js` using Mongoose. It reads `MONGO_URI` from environment variables and falls back to `mongodb://localhost:27017/naac_portal`.
+
+## Project Structure (key paths)
+
+- `src/` – React app
+- `server.js` – Express app entry
+- `routes/` – API routes
+- `models/` – Mongoose models
+- `config/db.js` – MongoDB connection
+
+## Notes
+
+- Ensure MongoDB is running before starting the API server.
+- On Windows PowerShell, use backticks or quotes correctly when running concurrent scripts if you customize them.
