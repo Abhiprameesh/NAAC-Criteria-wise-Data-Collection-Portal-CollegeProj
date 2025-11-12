@@ -65,16 +65,7 @@ const Reports = ({ naacData, deleteEntry, openModal }) => {
             <p style={{background: 'white', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0'}}>{entry.bestPractices}</p>
           </div>
         )}
-        {entry.files && entry.files.length > 0 && (
-          <div>
-            <h4>Attached Files:</h4>
-            <ul>
-              {entry.files.map((file, index) => (
-                <li key={index}>{file}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        
       </div>
     );
     

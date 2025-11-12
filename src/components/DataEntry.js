@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 
 const DataEntry = ({ onAddEntry, settings }) => {
   const [formData, setFormData] = useState({
@@ -14,9 +14,7 @@ const DataEntry = ({ onAddEntry, settings }) => {
     bestPractices: ''
   });
   
-  const [selectedFiles, setSelectedFiles] = useState([]);
   const [message, setMessage] = useState({ text: '', type: '' });
-  const fileInputRef = useRef(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -26,10 +24,7 @@ const DataEntry = ({ onAddEntry, settings }) => {
     }));
   };
 
-  const handleFileSelect = (e) => {
-    const files = Array.from(e.target.files);
-    setSelectedFiles(files);
-  };
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -40,10 +35,9 @@ const DataEntry = ({ onAddEntry, settings }) => {
       return;
     }
 
-    // Prepare data with files
+    // Prepare data
     const entryData = {
-      ...formData,
-      files: selectedFiles.map(file => file.name)
+      ...formData
     };
 
     onAddEntry(entryData);
@@ -64,10 +58,7 @@ const DataEntry = ({ onAddEntry, settings }) => {
       description: '',
       bestPractices: ''
     });
-    setSelectedFiles([]);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    
   };
 
   const showMessage = (text, type) => {
@@ -77,9 +68,7 @@ const DataEntry = ({ onAddEntry, settings }) => {
     }, 5000);
   };
 
-  const triggerFileInput = () => {
-    fileInputRef.current?.click();
-  };
+  
 
   return (
     <div className="tab-content">
@@ -236,33 +225,7 @@ const DataEntry = ({ onAddEntry, settings }) => {
             </div>
           </div>
 
-          <div className="form-section">
-            <h3>Supporting Documents</h3>
-            <div className="form-group">
-              <label>Upload Documents</label>
-              <div className="file-upload" onClick={triggerFileInput}>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  multiple
-                  accept=".pdf,.doc,.docx,.xlsx,.jpg,.png"
-                  onChange={handleFileSelect}
-                  style={{ display: 'none' }}
-                />
-                <div>📎 Click to upload files or drag and drop</div>
-                <small>Supported formats: PDF, DOC, DOCX, XLSX, JPG, PNG</small>
-              </div>
-              {selectedFiles.length > 0 && (
-                <div className="file-list">
-                  {selectedFiles.map((file, index) => (
-                    <div key={index} className="file-item">
-                      📄 {file.name} ({(file.size / 1024).toFixed(1)} KB)
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          
 
           <div className="form-group">
             <button type="submit" className="btn btn-primary">💾 Save Data</button>
